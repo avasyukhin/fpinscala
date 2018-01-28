@@ -45,6 +45,14 @@ object Par {
       if (run(es)(cond).get) t(es) // Notice we are blocking on the result of `cond`.
       else f(es)
 
+  def flatMap[A,B](a: Par[A])(f:A=>Par[B]):Par[B] =
+    es => f(run(es)(a).get)(es)
+  def join[A] (a:Par[Par[A]]):Par[A] = 
+    es => run(es)(run(es)(a).get())
+  def flatMapViaJoin[A,B](a:Par[A])(f:A=>Par[B]):Par[B]=
+     join(map(a)(f))
+  def joinViaFlatMap[A] (a: Par[Par[A]]):Par[A]=
+    es => flatMap(a)(pa => pa)(es)
   /* Gives us infix syntax for `Par`. */
   implicit def toParOps[A](p: Par[A]): ParOps[A] = new ParOps(p)
 
