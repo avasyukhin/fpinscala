@@ -25,12 +25,14 @@ object Prop {
 object Gen {
   def unit[A](a: => A): Gen[A] = ???
 }
+                          
 
 trait Gen[A] {
   def map[A,B](f: A => B): Gen[B] = ???
   def flatMap[A,B](f: A => Gen[B]): Gen[B] = ???
 }
 
+case class Gen[A](sample: State[RNG,A]){}
 trait SGen[+A] {
 
 }
